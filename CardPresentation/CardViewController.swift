@@ -9,23 +9,33 @@
 import UIKit
 
 class CardViewController: UIViewController {
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        transitioningDelegate = cardPresentationTransition
+    init(embedding viewController: UIViewController) {
+        super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .custom
+        transitioningDelegate = cardPresentationTransition
+        
+        self.viewController = viewController
     }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(codeer:) has not been implemented.")
+    }
+    
+    /// Embedded viewController.
+    var viewController: UIViewController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        addChildViewController(viewController)
+        view.addSubview(viewController.view)
+        viewController.view.bounds = view.frame
+        viewController.didMove(toParentViewController: self)
     }
     
     private lazy var cardPresentationTransition: CardTransitionDelegate = {
         return CardTransitionDelegate(with: self)
     }()
-
-    @IBAction func tappedCloseButton(_ sender: UIButton) {
-        presentingViewController?.dismiss(animated: true, completion: nil)
-    }
 }
 
 class CardTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {

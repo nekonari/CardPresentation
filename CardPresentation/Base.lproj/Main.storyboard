@@ -18,18 +18,32 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ImK-Dn-KVZ">
-                                <rect key="frame" x="164" y="318" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
-                                <connections>
-                                    <segue destination="QUI-Aq-V0A" kind="show" id="Tpy-HI-76j"/>
-                                </connections>
-                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="kGi-ci-cLy">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ImK-Dn-KVZ">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="313.5"/>
+                                        <state key="normal" title="Plain Transition"/>
+                                        <connections>
+                                            <action selector="tappedPlainTransitionButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="b6t-a8-MB3"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Un-Sh-brk">
+                                        <rect key="frame" x="0.0" y="333.5" width="375" height="313.5"/>
+                                        <state key="normal" title="Card Presentation Transition"/>
+                                        <connections>
+                                            <action selector="tappedCardTransitionButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Vqn-T0-KSD"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="ImK-Dn-KVZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="E2f-oK-hVz"/>
-                            <constraint firstItem="ImK-Dn-KVZ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="fQs-6G-IPm"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="top" secondItem="kGi-ci-cLy" secondAttribute="top" id="29O-5c-pTh"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="kGi-ci-cLy" secondAttribute="trailing" id="9PH-Tx-es7"/>
+                            <constraint firstItem="kGi-ci-cLy" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="OJL-1r-UkF"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="kGi-ci-cLy" secondAttribute="bottom" id="arj-oq-NlC"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -38,39 +52,10 @@
             </objects>
             <point key="canvasLocation" x="36" y="33.733133433283363"/>
         </scene>
-        <!--Card View Controller-->
-        <scene sceneID="QeE-Kw-HZb">
-            <objects>
-                <viewController id="QUI-Aq-V0A" customClass="CardViewController" customModule="CardPresentation" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="FqT-Yd-MHe">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SaJ-oU-Hn5">
-                                <rect key="frame" x="317" y="36" width="42" height="30"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Close"/>
-                                <connections>
-                                    <action selector="tappedCloseButton:" destination="QUI-Aq-V0A" eventType="touchUpInside" id="h8F-mh-L0i"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" red="1" green="0.76553607069999996" blue="0.77957790839999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="m86-fR-UKF" firstAttribute="trailing" secondItem="SaJ-oU-Hn5" secondAttribute="trailing" constant="16" id="42G-Ga-cxC"/>
-                            <constraint firstItem="SaJ-oU-Hn5" firstAttribute="top" secondItem="m86-fR-UKF" secondAttribute="top" constant="16" id="Tkm-YN-Qni"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="m86-fR-UKF"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="uJy-C5-qUW" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="956" y="33.733133433283363"/>
-        </scene>
-        <!--View Controller-->
+        <!--Scroll View Controller-->
         <scene sceneID="c48-oh-qRb">
             <objects>
-                <viewController id="Vww-9g-em3" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="scrollViewController" id="Vww-9g-em3" customClass="ScrollViewController" customModule="CardPresentation" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="cAY-HK-Br4">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -149,12 +134,18 @@
                                     <constraint firstAttribute="bottom" secondItem="lkH-HO-0Dd" secondAttribute="bottom" id="wXh-2P-393"/>
                                 </constraints>
                             </scrollView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gyI-Io-6Z1">
+                                <rect key="frame" x="328" y="28" width="39" height="30"/>
+                                <state key="normal" title="Close"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="Cl5-eW-pmn" firstAttribute="leading" secondItem="Hkg-MR-wfB" secondAttribute="leading" id="3c3-BC-X8w"/>
+                            <constraint firstItem="Cl5-eW-pmn" firstAttribute="trailing" secondItem="gyI-Io-6Z1" secondAttribute="trailing" constant="8" id="BpC-2b-KCG"/>
                             <constraint firstItem="Cl5-eW-pmn" firstAttribute="bottom" secondItem="Hkg-MR-wfB" secondAttribute="bottom" id="Zvk-rq-TRU"/>
                             <constraint firstItem="Cl5-eW-pmn" firstAttribute="trailing" secondItem="Hkg-MR-wfB" secondAttribute="trailing" id="bZJ-7t-V0c"/>
+                            <constraint firstItem="gyI-Io-6Z1" firstAttribute="top" secondItem="Cl5-eW-pmn" secondAttribute="top" constant="8" id="clr-hz-dPt"/>
                             <constraint firstItem="Cl5-eW-pmn" firstAttribute="top" secondItem="Hkg-MR-wfB" secondAttribute="top" id="ivv-u5-WxA"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Cl5-eW-pmn"/>
@@ -162,7 +153,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nHd-AM-cLr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1764" y="34"/>
+            <point key="canvasLocation" x="849" y="34"/>
         </scene>
     </scenes>
 </document>
