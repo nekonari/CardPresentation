@@ -9,125 +9,53 @@
 import UIKit
 
 class CardViewController: UIViewController {
-    
-    @IBOutlet var scrollView: UIScrollView!
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        transitioningDelegate = cardPresentationTransition
         modalPresentationStyle = .custom
-        transitioningDelegate = self
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        dismissalGestureRecognizer.addTarget(self, action: #selector(handleDismissalGesture(_:)))
-        view.addGestureRecognizer(dismissalGestureRecognizer)
-        scrollView.isScrollEnabled = false
     }
     
-    private let dismissalGestureRecognizer = UITapGestureRecognizer()
-    private let interactiveTransitionController = UIPercentDrivenInteractiveTransition()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    private lazy var cardPresentationTransition: CardTransitionDelegate = {
+        return CardTransitionDelegate(with: self)
+    }()
 
     @IBAction func tappedCloseButton(_ sender: UIButton) {
         presentingViewController?.dismiss(animated: true, completion: nil)
     }
-    
-    @objc private func handleDismissalGesture(_ sender: UIGestureRecognizer) {
-        guard sender === dismissalGestureRecognizer,
-            let recognizer = sender as? UIPanGestureRecognizer
-            else { return }
-        
-        switch recognizer.state {
-        case .began:
-            presentingViewController?.dismiss(animated: true, completion: nil)
-            interactiveTransitionController.pause()
-        case .changed:
-            let percent = recognizer.translation(in: view.superview).y / (view.superview?.bounds.height ?? UIScreen.main.bounds.height)
-            interactiveTransitionController.update(percent)
-        default:
-            let percent = recognizer.translation(in: view.superview).y / (view.superview?.bounds.height ?? UIScreen.main.bounds.height)
-            if percent > 0 {
-                interactiveTransitionController.finish()
-            } else {
-                interactiveTransitionController.cancel()
-            }
-        }
-    }
 }
 
-extension CardViewController: UIViewControllerTransitioningDelegate {
+class CardTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
+    init(with viewController: UIViewController) {
+        self.viewController = viewController
+    }
+    
+    private weak var viewController: UIViewController!
+    private lazy var interactiveTransitionController: CardPresentationPercentDrivenInteractiveTransition = {
+        return CardPresentationPercentDrivenInteractiveTransition(with: viewController)
+    }()
+
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return CardPresentationController(presentedViewController: presented, presenting: presenting)
     }
     
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return CardPresentationAnimatedController()
+        return CardPresentationTransitionAnimator()
     }
     
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return CardDismissalAnimatedController()
+        return CardDismissalTransitionAnimator()
     }
     
     func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        return interactiveTransitionController
+        return interactiveTransitionController.isInteractionInProgress ? interactiveTransitionController : nil
     }
     
     func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        return interactiveTransitionController
-    }
-}
-
-private class CardPresentationAnimatedController: NSObject, UIViewControllerAnimatedTransitioning {
-    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.5
-    }
-    
-    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        guard let presentedView = transitionContext.view(forKey: .to) else { return }
-        
-        // Move presentedView to the starting position
-        presentedView.frame.origin = CGPoint(x: 0, y: transitionContext.containerView.bounds.maxY)
-        
-        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
-            if let vc = transitionContext.viewController(forKey: .to) {
-                presentedView.frame = transitionContext.finalFrame(for: vc)
-            } else {
-                presentedView.frame = transitionContext.containerView.frame
-            }
-        }, completion: { completed in
-            if completed {
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-            }
-        })
-    }
-}
-
-private class CardDismissalAnimatedController: NSObject, UIViewControllerAnimatedTransitioning {
-    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.5
-    }
-    
-    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        guard let presentedView = transitionContext.view(forKey: .from) else { return }
-        
-        if transitionContext.isInteractive {
-            UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: [.curveLinear], animations: {
-                presentedView.frame.origin.y = transitionContext.containerView.bounds.maxY
-            }, completion: { completed in
-                if completed {
-                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-                }
-            })
-        } else {
-            UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
-                presentedView.frame.origin.y = transitionContext.containerView.bounds.maxY
-            }, completion: { completed in
-                if completed {
-                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-                }
-            })
-        }
+        return interactiveTransitionController.isInteractionInProgress ? interactiveTransitionController : nil
     }
 }
 
@@ -230,5 +158,97 @@ class CardPresentationController: UIPresentationController {
     
     override var shouldPresentInFullscreen: Bool {
         return false
+    }
+}
+
+private class CardPresentationPercentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransition {
+    var isInteractionInProgress: Bool = false
+    
+    init(with viewController: UIViewController) {
+        super.init()
+        
+        self.viewController = viewController
+        
+        let dismissalGestureRecognizer = UIPanGestureRecognizer()
+        dismissalGestureRecognizer.addTarget(self, action: #selector(handleDismissalGesture(_:)))
+        viewController.view?.addGestureRecognizer(dismissalGestureRecognizer)
+    }
+    
+    private weak var viewController: UIViewController?
+    
+    @objc private func handleDismissalGesture(_ sender: UIPanGestureRecognizer) {
+        guard sender.view === self.viewController?.view else { return }
+        
+        switch sender.state {
+        case .began:
+            isInteractionInProgress = true
+            viewController?.presentingViewController?.dismiss(animated: true, completion: nil)
+            pause()
+        case .changed:
+            let percent = sender.translation(in: viewController?.view).y / (viewController?.view?.bounds.height ?? UIScreen.main.bounds.height)
+            update(percent)
+        default:
+            isInteractionInProgress = false
+            let percent = sender.translation(in: viewController?.view).y / (viewController?.view?.bounds.height ?? UIScreen.main.bounds.height)
+            if percent > 0.5 {
+                finish()
+            } else {
+                cancel()
+            }
+        }
+    }
+}
+
+private class CardPresentationTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        return 0.5
+    }
+    
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard let presentedView = transitionContext.view(forKey: .to) else { return }
+        
+        // Move presentedView to the starting position
+        presentedView.frame.origin = CGPoint(x: 0, y: transitionContext.containerView.bounds.maxY)
+        
+        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
+            if let vc = transitionContext.viewController(forKey: .to) {
+                presentedView.frame = transitionContext.finalFrame(for: vc)
+            } else {
+                presentedView.frame = transitionContext.containerView.frame
+            }
+        }, completion: { completed in
+            if completed {
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            }
+        })
+    }
+}
+
+private class CardDismissalTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        return 0.5
+    }
+    
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        guard let presentedView = transitionContext.view(forKey: .from) else { return }
+        
+        if transitionContext.isInteractive {
+            UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: [.curveLinear], animations: {
+                presentedView.frame.origin.y = transitionContext.containerView.bounds.maxY
+            }, completion: { completed in
+                if completed {
+                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+                }
+            })
+        } else {
+            UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
+                presentedView.frame.origin.y = transitionContext.containerView.bounds.maxY
+            }, completion: { completed in
+                if completed {
+                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+                }
+            })
+        }
+
     }
 }
