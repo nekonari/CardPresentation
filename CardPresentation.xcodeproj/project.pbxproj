@@ -13,6 +13,7 @@
 		4C52E10A205B515E00654A81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C52E109205B515E00654A81 /* Assets.xcassets */; };
 		4C52E10D205B515E00654A81 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C52E10B205B515E00654A81 /* LaunchScreen.storyboard */; };
 		4C52E115205B51A000654A81 /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C52E114205B51A000654A81 /* CardViewController.swift */; };
+		4CFB3F55206B0FA400FBB338 /* CustomTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB3F54206B0FA400FBB338 /* CustomTransition.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		4C52E10C205B515E00654A81 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4C52E10E205B515E00654A81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4C52E114205B51A000654A81 /* CardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
+		4CFB3F54206B0FA400FBB338 /* CustomTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTransition.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				4C52E102205B515E00654A81 /* AppDelegate.swift */,
 				4C52E104205B515E00654A81 /* ViewController.swift */,
 				4C52E114205B51A000654A81 /* CardViewController.swift */,
+				4CFB3F54206B0FA400FBB338 /* CustomTransition.swift */,
 				4C52E106205B515E00654A81 /* Main.storyboard */,
 				4C52E109205B515E00654A81 /* Assets.xcassets */,
 				4C52E10B205B515E00654A81 /* LaunchScreen.storyboard */,
@@ -140,6 +143,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C52E105205B515E00654A81 /* ViewController.swift in Sources */,
+				4CFB3F55206B0FA400FBB338 /* CustomTransition.swift in Sources */,
 				4C52E103205B515E00654A81 /* AppDelegate.swift in Sources */,
 				4C52E115205B51A000654A81 /* CardViewController.swift in Sources */,
 			);
