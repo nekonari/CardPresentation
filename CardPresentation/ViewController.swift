@@ -63,6 +63,11 @@ class EmptyViewController: UIViewController {
 }
 
 class ScrollViewController: UIViewController, CustomTransitionEnabled {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
     @IBOutlet var scrollView: UIScrollView!
     @IBAction private func tappedCloseButton(_ sender: UIButton) {
         presentingViewController?.dismiss(animated: true, completion: nil)
@@ -71,9 +76,5 @@ class ScrollViewController: UIViewController, CustomTransitionEnabled {
     // MARK: CustomTransitionEnabled
     var customTransitionScrollView: UIScrollView? {
         return scrollView
-    }
-    
-    var canScroll: Bool {
-        return scrollView.contentOffset.y > -150
     }
 }

@@ -44,9 +44,9 @@ class CardViewController: UIViewController, CustomTransitionEnabled {
         return (viewController as? CustomTransitionEnabled)?.customTransitionScrollView
     }
     
-    var canScroll: Bool {
-        return (viewController as? CustomTransitionEnabled)?.canScroll ?? false
-    }
+//    var canScroll: Bool {
+//        return (viewController as? CustomTransitionEnabled)?.canScroll ?? false
+//    }
 }
 
 class CardTransitionDelegate: CustomTransitionDelegate {
