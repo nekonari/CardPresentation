@@ -8,9 +8,15 @@
 
 import UIKit
 
+protocol CustomTransitionEnabled {
+    /// Return an instance of UIScrollView to have CustomInteractiveTransitioning take it into account when initiating interactive dismissal.
+    var customTransitionScrollView: UIScrollView? { get }
+    var canScroll: Bool { get }
+}
+
 /// Provide custom transition delegate. You can override this class to provide your own objects for customizing different parts of view controller transitions.
 class CustomTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
-    init(with viewController: UIViewController, interactiveTransition: CustomInteractiveTransitioning?) {
+    init(with viewController: UIViewController, interactiveTransition: CustomInteractiveTransitioning? = nil) {
         self.viewController = viewController
         super.init()
         
@@ -46,10 +52,11 @@ class CustomTransitionDelegate: NSObject, UIViewControllerTransitioningDelegate 
 }
 
 protocol CustomInteractiveTransitioning: UIViewControllerInteractiveTransitioning {
+    /// Return true if user is trying to transition interactively.
     var isInteractionInProgress: Bool { get }
 }
 
-class CustomPercentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransition, CustomInteractiveTransitioning {
+class CustomPercentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransition, CustomInteractiveTransitioning, UIGestureRecognizerDelegate {
     var isInteractionInProgress: Bool = false
     
     init(with viewController: UIViewController) {
@@ -58,6 +65,7 @@ class CustomPercentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransi
         self.viewController = viewController
         
         let dismissalGestureRecognizer = UIPanGestureRecognizer()
+        dismissalGestureRecognizer.delegate = self
         dismissalGestureRecognizer.addTarget(self, action: #selector(handleDismissalGesture(_:)))
         viewController.view?.addGestureRecognizer(dismissalGestureRecognizer)
     }
@@ -65,7 +73,9 @@ class CustomPercentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransi
     private weak var viewController: UIViewController?
     
     @objc private func handleDismissalGesture(_ sender: UIPanGestureRecognizer) {
-        guard sender.view === self.viewController?.view else { return }
+        print((self.viewController as? CustomTransitionEnabled)?.customTransitionScrollView?.contentOffset.y)
+        print((self.viewController as? CustomTransitionEnabled)?.canScroll)
+        guard sender.view === self.viewController?.view, !((self.viewController as? CustomTransitionEnabled)?.canScroll ?? false) else { return }
         
         switch sender.state {
         case .began:
@@ -74,16 +84,29 @@ class CustomPercentDrivenInteractiveTransition: UIPercentDrivenInteractiveTransi
             pause()
         case .changed:
             let percent = sender.translation(in: viewController?.view).y / (viewController?.view?.bounds.height ?? UIScreen.main.bounds.height)
-            update(percent)
+            let cleanPercent = (percent * 10000.0).rounded(.up) / 10000.0
+            update(cleanPercent)
         default:
             isInteractionInProgress = false
             let percent = sender.translation(in: viewController?.view).y / (viewController?.view?.bounds.height ?? UIScreen.main.bounds.height)
             if percent > 0.5 {
                 finish()
             } else {
+//                (viewController as? CustomTransitionEnabled)?.customTransitionScrollView?.isScrollEnabled = true
                 cancel()
             }
         }
+    }
+    
+    // MARK: UIGestureRecognizerDelegate
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Setup interactive dismissal to work with scroll view
+        guard let vc = viewController as? CustomTransitionEnabled,
+            let scrollView = vc.customTransitionScrollView
+            else { return false }
+        
+        return otherGestureRecognizer.view === scrollView
     }
 }
 
@@ -137,6 +160,5 @@ private class CustomDismissalTransitionAnimator: NSObject, UIViewControllerAnima
                 }
             })
         }
-        
     }
 }

@@ -8,7 +8,8 @@
 
 import UIKit
 
-class CardViewController: UIViewController {
+class CardViewController: UIViewController, CustomTransitionEnabled {
+    
     init(embedding viewController: UIViewController) {
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .custom
@@ -36,6 +37,16 @@ class CardViewController: UIViewController {
     private lazy var cardPresentationTransition: CardTransitionDelegate = {
         return CardTransitionDelegate(with: self)
     }()
+    
+    // MARK: CustomTransitionEnabled
+    
+    var customTransitionScrollView: UIScrollView? {
+        return (viewController as? CustomTransitionEnabled)?.customTransitionScrollView
+    }
+    
+    var canScroll: Bool {
+        return (viewController as? CustomTransitionEnabled)?.canScroll ?? false
+    }
 }
 
 class CardTransitionDelegate: CustomTransitionDelegate {

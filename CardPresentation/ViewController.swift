@@ -28,6 +28,13 @@ class ViewController: UIViewController {
         let cardVC = CardViewController(embedding: embeddedVC)
         present(cardVC, animated: true, completion: nil)
     }
+    
+    @IBAction func tappedScrollViewButton(_ sender: UIButton) {
+        let scrollVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "scrollViewController") as! ScrollViewController
+        let cardVC = CardViewController(embedding: scrollVC)
+        present(cardVC, animated: true, completion: nil)
+    }
+    
 }
 
 class EmptyViewController: UIViewController {
@@ -55,10 +62,18 @@ class EmptyViewController: UIViewController {
     }
 }
 
-class ScrollViewController: UIViewController {
-    
-    
-    @IBAction func tappedCloseButton(_ sender: UIButton) {
+class ScrollViewController: UIViewController, CustomTransitionEnabled {
+    @IBOutlet var scrollView: UIScrollView!
+    @IBAction private func tappedCloseButton(_ sender: UIButton) {
         presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    // MARK: CustomTransitionEnabled
+    var customTransitionScrollView: UIScrollView? {
+        return scrollView
+    }
+    
+    var canScroll: Bool {
+        return scrollView.contentOffset.y > -150
     }
 }

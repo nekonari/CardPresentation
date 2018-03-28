@@ -60,8 +60,8 @@
 			children = (
 				4C52E102205B515E00654A81 /* AppDelegate.swift */,
 				4C52E104205B515E00654A81 /* ViewController.swift */,
-				4C52E114205B51A000654A81 /* CardViewController.swift */,
 				4CFB3F54206B0FA400FBB338 /* CustomTransition.swift */,
+				4C52E114205B51A000654A81 /* CardViewController.swift */,
 				4C52E106205B515E00654A81 /* Main.storyboard */,
 				4C52E109205B515E00654A81 /* Assets.xcassets */,
 				4C52E10B205B515E00654A81 /* LaunchScreen.storyboard */,
